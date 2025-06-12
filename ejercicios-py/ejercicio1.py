@@ -1,45 +1,58 @@
 from tabulate import tabulate
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 import sys
-# Definir la funcion para realizar el cálculo
-def calcular(num1: float, num2: float, operacion: str) -> float:
-    if operacion == '+':
-        return num1 + num2
-    elif operacion == '-':
-        return num1 - num2
-    elif operacion == '*':
-        return num1 * num2
-    elif operacion == '/':
-        return "Error: división por cero" if num2 == 0 else num1 / num2
-    else:
-        return "Operación no válida"
+
+# ----------------------- FUNCIONES PRINCIPALES -----------------------
+
+def calcular(num1: float, num2: float, operacion: str) -> Union[float, str]:
+    """Realiza una operación matemática básica entre dos números."""
+    try:
+        match operacion:
+            case '+': return num1 + num2
+            case '-': return num1 - num2
+            case '*': return num1 * num2
+            case '/': return "Error: división por cero" if num2 == 0 else round(num1 / num2, 2)
+            case _:  return "Operación no válida"
+    except Exception as e:
+        return f"Error: {e}"
 
 def mostrar_resultados(resultados: List[Dict[str, Any]], titulo: str) -> None:
-    print(f"\n{titulo}")
-    print(tabulate(resultados, headers="keys", tablefmt="grid"))
-    sys.stdout.flush()  # Forzar la salida inmediata
+    """Muestra resultados tabulados con título y formato."""
+    print(f"\n🔷 {titulo}")
+    print(tabulate(resultados, headers="keys", tablefmt="fancy_grid"))
+    sys.stdout.flush()
 
-# Datos para pruebas
-numeros = [5, 3, 10, 0, 2, 4, 10, 2]
-operaciones = ['+', '-', '*', '/']
-
-print("🧮 Calculadora avanzada en Python\n")
-sys.stdout.flush()
-
-# 1. Usando for tradicional
-print("Iniciando sección 1...")
-resultados_for = []
-for i in range(0, len(numeros), 2):
-    for op in operaciones:
-        if i + 1 < len(numeros):
-            resultados_for.append({
-                'Número 1': numeros[i],
-                'Número 2': numeros[i + 1],
-                'Operación': op,
-                'Resultado': calcular(numeros[i], numeros[i + 1], op)
+def ejecutar_operaciones(numeros: List[float], operaciones: List[str]) -> List[Dict[str, Any]]:
+    """Ejecuta operaciones entre pares de números en una lista."""
+    resultados = []
+    for i in range(0, len(numeros) - 1, 2):
+        n1, n2 = numeros[i], numeros[i + 1]
+        for op in operaciones:
+            resultado = calcular(n1, n2, op)
+            resultados.append({
+                "Número 1": n1,
+                "Número 2": n2,
+                "Operación": op,
+                "Resultado": resultado
             })
-mostrar_resultados(resultados_for, "1️⃣ Operaciones con for tradicional:")
+    return resultados
 
-print("\n✅ Ejecución completada")
-sys.stdout.flush()
+# ----------------------- DATOS Y FLUJO PRINCIPAL -----------------------
+
+def main():
+    print("🧮 Calculadora Avanzada en Python")
+    sys.stdout.flush()
+
+    numeros = [5, 3, 10, 0, 2, 4, 10, 2]
+    operaciones = ['+', '-', '*', '/']
+
+    print("\n🚀 Iniciando sección 1: Operaciones básicas con for tradicional...")
+    resultados = ejecutar_operaciones(numeros, operaciones)
+    mostrar_resultados(resultados, "1️⃣ Resultados de operaciones")
+
+    print("\n✅ Ejecución completada correctamente.\n")
+    sys.stdout.flush()
+
+if __name__ == "__main__":
+    main()
 
